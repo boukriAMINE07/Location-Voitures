@@ -1,0 +1,74 @@
+﻿@model IEnumerable<Lc_Voitures.Models.User>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.nom_Complet)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.date_Naissance)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.tele)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.email)
+        </th>
+        
+        <th>
+            @Html.DisplayNameFor(model => model.image_CIN)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.image_Permis)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsAdmin)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+<tr>
+    <td>
+        @Html.DisplayFor(modelItem => item.nom_Complet)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.date_Naissance)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.tele)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.email)
+    </td>
+    
+
+
+    <td>
+        <img src="" alt="" height=80 width=160 />
+    </td>
+    <td>
+        <img src="" alt="" height=80 width=160 />
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.IsAdmin)
+    </td>
+    <td>
+        @Html.ActionLink("Edit", "Edit", new { id = item.userID }) |
+        @Html.ActionLink("Details", "Details", new { id = item.userID }) |
+        @Html.ActionLink("Delete", "Delete", new { id = item.userID })
+    </td>
+</tr>
+}
+
+</table>

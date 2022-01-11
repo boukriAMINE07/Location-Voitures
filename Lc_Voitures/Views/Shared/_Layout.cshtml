@@ -1,0 +1,91 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Mon application ASP.NET</title>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    @Styles.Render("~/Content/css")
+    @Styles.Render("~/Content/themes/base/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    <script>
+        $(document).ready(function () {
+            var authid = "@Session["authname"]";
+            var authrole = "@Session["authrole"]";
+
+            if (authid == "") {
+                $("#notsigned").show();
+            }
+            else {
+                $("#signed").show();
+            }
+            
+            
+        });
+    </script>
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <i> @Html.ActionLink("YourCar", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })</i>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("Voitures", "Index", "Voitures")</li>
+                    <li>@Html.ActionLink("User", "Index", "Users")</li>
+                    <li>@Html.ActionLink("Cotegorie", "Index", "categories")</li>
+                    <li>@Html.ActionLink("Modele", "Index", "Modeles")</li>
+                    <li>@Html.ActionLink("Location", "Index", "Locations")</li>
+                </ul>
+               
+               
+                <ul class="nav navbar-nav navbar-right" id="notsigned" hidden="hidden">
+                    <li><a href="/Users/Create"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" href="/Users/login" ><span class="glyphicon glyphicon-log-in"></span> Login</a>
+                       
+                    </li>
+                </ul>
+
+                <ul class="nav navbar-nav navbar-right" id="signed" hidden="hidden">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            <center>
+                                Hello @Session["authname"] | @Session["authrole"]
+
+                                <span class="caret"></span>
+                            </center>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/Users/Details">PROFIL</a></li>
+                            @*<li id="workers" hidden="hidden"><a href="/cars/workers">WORKERS ACTIONS</a></li>*@
+                            <li role="separator" class="divider"></li>
+                            <li><a href="/Users/logout">Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - developed by Boukri Amine</p>
+        </footer>
+    </div>
+
+   
+    @RenderSection("scripts", required: false)
+</body>
+</html>

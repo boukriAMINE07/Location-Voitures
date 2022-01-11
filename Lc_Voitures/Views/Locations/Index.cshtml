@@ -1,0 +1,58 @@
+﻿@model IEnumerable<Lc_Voitures.Models.Location>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.User.nom_Complet)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Voiture.matricule)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Voiture.Modele.nom)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.StartDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EndDate)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+<tr>
+    <td>
+        @Html.DisplayFor(modelItem => item.User.nom_Complet)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Voiture.matricule)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Voiture.Modele.nom)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.StartDate)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.EndDate)
+    </td>
+    <td>
+        @Html.ActionLink("Edit", "Edit", new { id = item.locationID }) |
+        @Html.ActionLink("Details", "Details", new { id = item.locationID }) |
+        @Html.ActionLink("Delete", "Delete", new { id = item.locationID })
+    </td>
+</tr>
+}
+
+</table>
