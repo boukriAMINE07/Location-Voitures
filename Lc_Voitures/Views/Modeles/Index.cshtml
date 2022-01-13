@@ -8,10 +8,13 @@
 <h2>Index</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Créer un nouveau", "Create", null, new { @class = "btn btn-outline-dark" })
 </p>
-<table class="table">
+<table class="table table-striped table-hover">
     <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.modeleID)
+        </th>
         <th>
             @Html.DisplayNameFor(model => model.nom)
         </th>
@@ -22,19 +25,27 @@
     </tr>
 
 @foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.nom)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.serie)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.modeleID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.modeleID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.modeleID })
-        </td>
-    </tr>
+<tr>
+    <td>
+        @Html.DisplayFor(modelItem => item.modeleID)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.nom)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.serie)
+    </td>
+    <td>
+        <div class="btn-group">
+
+
+            @Html.ActionLink("Modifier", "Edit", new { id = item.modeleID }, new { @class = "btn btn-outline-primary" })
+            @Html.ActionLink("Details", "Details", new { id = item.modeleID }, new { @class = "btn btn-outline-success" })
+            @Html.ActionLink("Supprimer", "Delete", new { id = item.modeleID }, new { @class = "btn btn-outline-danger" })
+        </div>
+
+    </td>
+</tr>
 }
 
 </table>

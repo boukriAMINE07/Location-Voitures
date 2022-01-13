@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Lc_Voitures.Models;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
@@ -7,7 +6,6 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
-using Lc_Voitures.Models;
 
 namespace Lc_Voitures.Controllers
 {
@@ -82,11 +80,11 @@ namespace Lc_Voitures.Controllers
             if (emailId != "")
             {
                 User user = db.Users.Find(emailId);
-                
+
                 if (user.IsAdmin)
                 {
                     return View("CreateAdmin");
-                }   
+                }
 
             }
             return View();
@@ -106,10 +104,10 @@ namespace Lc_Voitures.Controllers
                 return View(user);
             }
             string emailId = System.Web.HttpContext.Current.User.Identity.Name;
-            //HttpPostedFileBase file2 = Request.Files["ImageDataPermis"];
-            //HttpPostedFileBase file1 = Request.Files["ImageDataCIN"];
-            //ContentRepository service = new ContentRepository();
-            //service.UploadImageInDataBase(file1, file2, user);
+            HttpPostedFileBase file2 = Request.Files["ImageDataPermis"];
+            HttpPostedFileBase file1 = Request.Files["ImageDataCIN"];
+            ContentRepository service = new ContentRepository();
+            service.UploadImageInDataBase(file1, file2, user);
             if (ModelState.IsValid)
             {
                 db.Users.Add(user);
@@ -126,7 +124,7 @@ namespace Lc_Voitures.Controllers
             return View(user);
         }
 
-        
+
         public ActionResult CreateAdmin()
         {
 
@@ -141,8 +139,8 @@ namespace Lc_Voitures.Controllers
                 }
 
             }
-           
-             return View();
+
+            return View();
 
 
         }

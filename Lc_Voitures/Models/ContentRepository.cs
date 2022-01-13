@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Web;
 
 namespace Lc_Voitures.Models
@@ -20,7 +17,7 @@ namespace Lc_Voitures.Models
                 image_Permis = user.image_Permis
             };
             db.Users.Add(Client);
-            db.SaveChanges();
+            //db.SaveChanges();
 
 
         }
@@ -29,20 +26,20 @@ namespace Lc_Voitures.Models
             voiture.image = ConvertToBytes(file);
             var Content = new Voiture
             {
-               
+
                 image = voiture.image
             };
             db.Voitures.Add(Content);
-             db.SaveChanges();
-            
+            //db.SaveChanges();
+
         }
         public byte[] ConvertToBytes(HttpPostedFileBase image)
         {
             byte[] imageBytes = null;
-           
-                BinaryReader reader = new BinaryReader(image.InputStream);
-                imageBytes = reader.ReadBytes((int)image.ContentLength);
-                return imageBytes;
+
+            BinaryReader reader = new BinaryReader(image.InputStream);
+            imageBytes = reader.ReadBytes((int)image.ContentLength);
+            return imageBytes;
 
         }
     }

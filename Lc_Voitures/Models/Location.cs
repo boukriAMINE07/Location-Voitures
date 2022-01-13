@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
 
 namespace Lc_Voitures.Models
 {
@@ -21,7 +18,7 @@ namespace Lc_Voitures.Models
         public int voitureID { get; set; }
         public virtual Voiture Voiture { get; set; }
         public int userID { get; set; }
-        
+
         public virtual User User { get; set; }
     }
 }

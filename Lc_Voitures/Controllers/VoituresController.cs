@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using Lc_Voitures.Models;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using Lc_Voitures.Models;
 
 namespace Lc_Voitures.Controllers
 {
@@ -19,6 +16,25 @@ namespace Lc_Voitures.Controllers
         {
             var voitures = db.Voitures.Include(v => v.Categorie).Include(v => v.Modele);
             return View(voitures.ToList());
+        }
+
+        public ActionResult ImageVoiture(int id)
+        {
+            byte[] cover = GetImageVoitureFromDataBase(id);
+            if (cover != null)
+            {
+                return File(cover, "image/jpg");
+            }
+            else
+            {
+                return null;
+            }
+        }
+        public byte[] GetImageVoitureFromDataBase(int Id)
+        {
+            var q = from temp in db.Voitures where temp.voitureID == Id select temp.image;
+            byte[] cover = q.First();
+            return cover;
         }
 
         // GET: Voitures/Details/5
@@ -52,6 +68,10 @@ namespace Lc_Voitures.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "voitureID,matricule,date_Mise_En_Circulation,prix_Par_Jour,carburant,image,modeleID,categorieID")] Voiture voiture)
         {
+            HttpPostedFileBase file1 = Request.Files["ImageDataVoiture"];
+            ContentRepository service = new ContentRepository();
+            service.UploadImageInDataBase(file1, voiture);
+
             if (ModelState.IsValid)
             {
                 db.Voitures.Add(voiture);
@@ -90,6 +110,9 @@ namespace Lc_Voitures.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "voitureID,matricule,date_Mise_En_Circulation,prix_Par_Jour,carburant,image,modeleID,categorieID")] Voiture voiture)
         {
+            HttpPostedFileBase file1 = Request.Files["ImageDataVoiture"];
+            ContentRepository service = new ContentRepository();
+            service.UploadImageInDataBase(file1, voiture);
             if (ModelState.IsValid)
             {
                 db.Entry(voiture).State = EntityState.Modified;

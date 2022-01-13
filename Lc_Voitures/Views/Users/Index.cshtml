@@ -8,9 +8,9 @@
 <h2>Index</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Créer un nouveau", "Create", null, new { @class = "btn btn-outline-dark" })
 </p>
-<table class="table">
+<table class="table table-striped table-hover">
     <tr>
         <th>
             @Html.DisplayNameFor(model => model.nom_Complet)
@@ -34,7 +34,7 @@
         <th>
             @Html.DisplayNameFor(model => model.IsAdmin)
         </th>
-        <th></th>
+        <th>ACTION</th>
     </tr>
 
 @foreach (var item in Model) {
@@ -55,18 +55,24 @@
 
 
     <td>
-        <img src="" alt="" height=80 width=160 />
+        <img src="/Users/ImageCIN/@item.userID" alt="" height=80 width=120 />
     </td>
     <td>
-        <img src="" alt="" height=80 width=160 />
+        <img src="/Users/ImagePermis/@item.userID" alt="" height=80 width=120 />
     </td>
     <td>
         @Html.DisplayFor(modelItem => item.IsAdmin)
     </td>
     <td>
-        @Html.ActionLink("Edit", "Edit", new { id = item.userID }) |
-        @Html.ActionLink("Details", "Details", new { id = item.userID }) |
-        @Html.ActionLink("Delete", "Delete", new { id = item.userID })
+        <div class="btn-group">
+
+            @Html.ActionLink("Modifier", "Edit", new { id = item.userID }, new { @class = "btn btn-outline-primary" }) 
+            @Html.ActionLink("Details", "Details", new { id = item.userID }, new { @class = "btn btn-outline-success" }) 
+            @Html.ActionLink("Supprimer", "Delete", new { id = item.userID }, new { @class = "btn btn-outline-danger" })
+
+            
+        </div>
+        
     </td>
 </tr>
 }

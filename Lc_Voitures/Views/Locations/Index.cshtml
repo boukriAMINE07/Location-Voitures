@@ -48,9 +48,12 @@
         @Html.DisplayFor(modelItem => item.EndDate)
     </td>
     <td>
-        @Html.ActionLink("Edit", "Edit", new { id = item.locationID }) |
-        @Html.ActionLink("Details", "Details", new { id = item.locationID }) |
-        @Html.ActionLink("Delete", "Delete", new { id = item.locationID })
+        <div class="btn-group">
+            @Html.ActionLink("Modifier", "Edit", new { id = item.locationID }, new { @class = "btn btn-outline-primary" })
+            @Html.ActionLink("Details", "Details", new { id = item.locationID }, new { @class = "btn btn-outline-success" })
+            @Html.ActionLink("Supprimer", "Delete", new { id = item.locationID }, new { @class = "btn btn-outline-danger" })
+        </div>
+        
     </td>
 </tr>
 }
