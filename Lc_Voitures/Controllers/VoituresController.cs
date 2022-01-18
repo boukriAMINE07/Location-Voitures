@@ -1,15 +1,22 @@
 ﻿using Lc_Voitures.Models;
+using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using static Lc_Voitures.Models.Voiture;
+using static Lc_Voitures.Models.Categorie;
 
 namespace Lc_Voitures.Controllers
 {
     public class VoituresController : Controller
     {
         private LocationDB db = new LocationDB();
+        private static DateTime start;
+        private static DateTime end;
+        private static Voiture VoitureFilter = new Voiture();
 
         // GET: Voitures
         public ActionResult Index()
@@ -44,12 +51,26 @@ namespace Lc_Voitures.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Voiture voiture = db.Voitures.Find(id);
-            if (voiture == null)
+            Voiture selectedCar = db.Voitures.Find(id);
+            ViewBag.carNumber = selectedCar.matricule;
+            Voiture carType;
+            Location carinfo;
+            MakeCarInfo(id, out carType, out carinfo);
+            if (selectedCar == null)
             {
                 return HttpNotFound();
             }
-            return View(voiture);
+            return View(selectedCar);
+        }
+        private void MakeCarInfo(int? id,out Voiture selectedCar, out Location carinfo)
+        {
+            selectedCar = db.Voitures.Find(id);
+            carinfo = new Location
+            {
+                Voiture= selectedCar,
+                StartDate = start,
+                EndDate = end,
+            };
         }
 
         // GET: Voitures/Create
@@ -84,7 +105,19 @@ namespace Lc_Voitures.Controllers
             ViewBag.modeleSerie = new SelectList(db.Modeles, "modeleID", "serie", voiture.modeleID);
             return View(voiture);
         }
-
+        private void SaveViewBages(int skip, int take, int carsNum)
+        {
+            ViewBag.carsNum = carsNum;
+            ViewBag.current = skip;
+            if (carsNum % take == 0)
+            {
+                ViewBag.pages = (carsNum / take);
+            }
+            else
+            {
+                ViewBag.pages = (carsNum / take) + 1;
+            }
+        }
         // GET: Voitures/Edit/5
         public ActionResult Edit(int? id)
         {
@@ -149,6 +182,119 @@ namespace Lc_Voitures.Controllers
             db.Voitures.Remove(voiture);
             db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+
+        public ActionResult ListeVoitures(int skip = 1, int take = 6)
+        {
+            string emailId = System.Web.HttpContext.Current.User.Identity.Name;
+            if (emailId != "")
+            {
+                bool isAdmin = db.Users.FirstOrDefault(t => t.email == emailId).IsAdmin;
+                if (isAdmin)
+                {
+                    return Redirect("/Cars/index");
+                }
+            }
+            List<Voiture> carTypes;
+            int carsNum;
+            MakeList(skip, take, out carTypes, out carsNum);
+            CreateViewBags(skip, take, carsNum);
+            return View(carTypes);
+
+        }
+        private void CreateViewBags(int skip, int take, int carsNum)
+        {
+
+            ViewBag.carsNum = carsNum;
+
+            ViewBag.nom = db.Modeles.Select(t => t.nom ).Distinct();
+            ViewBag.serie = db.Modeles.Select(t => t.serie).Distinct();
+            ViewBag.type = db.Categories.Select(t => t.type).Distinct();
+            
+            
+            ViewBag.current = skip;
+            if (carsNum % take == 0)
+            {
+                ViewBag.pages = (carsNum / take);
+            }
+            else
+            {
+                ViewBag.pages = (carsNum / take) + 1;
+            }
+            ViewBag.start = start.ToString("dd/MM/yyyy");
+            ViewBag.end = end.ToString("dd/MM/yyyy");
+        }
+
+        private void MakeList(int skip, int take, out List<Voiture> carTypes, out int carsNum)
+        {
+            carTypes = new List<Voiture>();
+            carTypes = db.Voitures.OrderBy(t => t.voitureID).ToList();
+            carTypes = FilterCarsbyModeleAndCategorie(carTypes);
+            carsNum = carTypes.Count;
+            carTypes = carTypes.
+                Skip((skip - 1) * take).
+                Take(take).
+                ToList();
+        }
+
+        private static List<Voiture> FilterCarsbyModeleAndCategorie(List<Voiture> carTypes)
+        {
+            if ( VoitureFilter.modeleID  != 0)
+            {
+                carTypes = carTypes.
+                    Where(w => w.Modele.nom == VoitureFilter.Modele.nom ).
+                    ToList();
+            }
+            if (VoitureFilter.modeleID != 0)
+            {
+                carTypes = carTypes.
+                    Where( w=>w.Modele.serie == VoitureFilter.Modele.serie).
+                    ToList();
+            }
+            if (VoitureFilter.categorieID != 0 )
+            {
+                carTypes = carTypes.
+                    Where(w => w.Categorie.type  == VoitureFilter.Categorie.type).
+                    ToList();
+            }
+            //if (VoitureFilter.modeleID != 0)
+            //{
+            //    carTypes = carTypes.
+            //        Where(w => w.Modele.serie == VoitureFilter.Modele.serie).
+            //        ToList();
+            //}
+            //if (VoitureFilter.FreeText != "" && VoitureFilter.FreeText != null)
+            //{
+            //    carTypes = carTypes.
+            //        Where(s => s.ManifacturerName.ToLower().Contains(VoitureFilter.FreeText.ToLower())
+            //        || (s.ModelName.ToLower().Contains(VoitureFilter.FreeText.ToLower()))).
+            //        ToList();
+
+            //}
+
+            return carTypes;
+        }
+        public void InitStartDate(DateTime startDate)
+        {
+            start = startDate;
+        }
+
+        /// <summary>
+        /// initializing the end hire date that the client picked
+        /// </summary>
+        /// <param name="endDate"></param>
+        public void InitEndDate(DateTime endDate)
+        {
+            end = endDate;
+        }
+        public void InitFilter(TypeCarburant filtercarburant, TypeCategorie type, string nom, string serie)
+        {
+            VoitureFilter.carburant = filtercarburant;
+            VoitureFilter.Categorie.type = type;
+            VoitureFilter.Modele.nom = nom;
+            VoitureFilter.Modele.serie = serie;
+           // VoitureFilter.FreeText = freeText;
         }
 
         protected override void Dispose(bool disposing)

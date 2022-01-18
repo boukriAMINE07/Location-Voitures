@@ -85,15 +85,11 @@ namespace Lc_Voitures.Controllers
                 {
                     return View("CreateAdmin");
                 }
-
+                return Redirect("Users/index");
             }
             return View();
-
-
         }
-
         // POST: Users/Create
-
         [Route("Create")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -124,23 +120,12 @@ namespace Lc_Voitures.Controllers
             return View(user);
         }
 
-
+        
         public ActionResult CreateAdmin()
         {
 
-            string emailId = System.Web.HttpContext.Current.User.Identity.Name;
-            if (emailId != "")
-            {
-                User user = db.Users.Find(emailId);
-                //*** if the client has manager permissions:
-                if (user.IsAdmin)
-                {
-                    return View();
-                }
-
-            }
-
             return View();
+           
 
 
         }
@@ -237,13 +222,17 @@ namespace Lc_Voitures.Controllers
         }
 
         [HttpPost]
-        public ActionResult login(string email, string password)
+        public ActionResult login(string email, string password, string returnUrl)
         {
             User user = db.Users.FirstOrDefault(t => t.email == email && t.password == password);
             if (user != null)
             {
                 SaveAuthSession(email, user);
-                return Redirect("/Voitures/index");
+                if (returnUrl == "" || returnUrl == null)
+                {
+                    return Redirect("/Voitures/index");
+                }
+                return Redirect(returnUrl);
 
             }
             return View();

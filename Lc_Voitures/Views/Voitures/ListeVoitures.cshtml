@@ -1,0 +1,384 @@
+﻿@model IEnumerable<Lc_Voitures.Models.Voiture>
+@{
+    ViewBag.Title = "ListeVoitures";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>ListeVoitures</h2>
+<style>
+    .glyphicon {
+        margin-right: 5px;
+    }
+
+    .thumbnail {
+        margin-bottom: 20px;
+        padding: 0px;
+        -webkit-border-radius: 0px;
+        -moz-border-radius: 0px;
+        border-radius: 0px;
+    }
+
+    .item.list-group-item {
+        float: none;
+        width: 100%;
+        background-color: #fff;
+        margin-bottom: 10px;
+    }
+
+        .item.list-group-item:nth-of-type(odd):hover, .item.list-group-item:hover {
+            background: #428bca;
+        }
+
+        .item.list-group-item .list-group-image {
+            margin-right: 10px;
+        }
+
+        .item.list-group-item .thumbnail {
+            margin-bottom: 0px;
+        }
+
+        .item.list-group-item .caption {
+            padding: 9px 9px 0px 9px;
+        }
+
+        .item.list-group-item:nth-of-type(odd) {
+            background: #eeeeee;
+        }
+
+        .item.list-group-item:before, .item.list-group-item:after {
+            display: table;
+            content: " ";
+        }
+
+        .item.list-group-item img {
+            float: left;
+        }
+
+        .item.list-group-item:after {
+            clear: both;
+        }
+
+    .list-group-item-text {
+        margin: 0 0 11px;
+    }
+</style>
+
+<link href="~/Content/bootstrap-datepicker.css" rel="stylesheet" />
+<script src="~/Scripts/bootstrap-datepicker.js"></script>
+<script>
+    function validate(modeleID, categorieID) {
+        var start = document.getElementById("startDate").value;
+        var end = document.getElementById("endDate").value;
+        if (start == "" && end == "") {
+            $("#startDate").css({"borderColor":"red","border-width":"thick"});
+            $("#endDate").css({"borderColor":"red","border-width":"thick"});
+            $("#startDate").popover({
+                title: 'Warning!',
+                content: 'date must be filled',
+                placement: 'bottom'
+            }).popover('show');
+            $('html, body').animate({
+                scrollTop: $("#datepicker").offset().top
+            }, 500);
+            return false;
+        }
+        else if (start == "") {
+            $("#startDate").css({"borderColor":"red","border-width":"thick"});
+            $("#startDate").popover({
+                title: 'Warning!',
+                content: 'date must be filled',
+                placement: 'bottom'
+            }).popover('show');
+            $('html, body').animate({
+                scrollTop: $("#datepicker").offset().top
+            }, 500);
+            return false;
+        }
+        else if (end == "") {
+            $("#endDate").css({"borderColor":"red","border-width":"thick"});
+            $("#endDate").popover({
+                title: 'Warning!',
+                content: 'date must be filled',
+                placement: 'bottom'
+            }).popover('show');
+            $('html, body').animate({
+                scrollTop: $("#datepicker").offset().top
+            }, 500);
+            return false;
+        }
+
+        var items = localStorage.interests;
+        if (localStorage.interests == null) {
+            localStorage.interests = modeleID + " " + categorieID;
+        }
+        else if (!items.includes(modeleID + " " + categorieID)) {
+            localStorage.interests += "," + modeleID + " " + categorieID;
+        }
+    }
+    function sendFilter() {
+        var gear = $('#slctGear').val();
+        if (gear == null) {
+            gear = "0";
+        }
+        var type = $('#slctType').val();
+       
+        var nom = $('#slctNom').val();
+
+        var serie = $('#slctSerie').val();
+
+
+        $.post('InitFilter',
+            { filtercarburant: gear, type: type, nom: nom, serie: serie});
+    }
+    $(document).ready(function () {
+        $('#datepicker').datepicker({
+            startDate: "today",
+            format: "dd MM yyyy",
+            todayBtn: "linked",
+            autoclose: true,
+            todayHighlight: true
+        });
+        var dateStart=new Date("@ViewBag.start");
+        var dateEnd=new Date("@ViewBag.end");
+        if (dateStart.toString()!="01/01/0001") {
+            $("#startDate").datepicker('update', dateStart);
+        }
+        if (dateEnd.toString()!="01/01/0001") {
+            $("#endDate").datepicker('update', dateEnd);
+        }
+        $('#list').click(function (event) {
+            event.preventDefault();
+            $('#products .item').addClass('list-group-item');
+        });
+        $('#grid').click(function (event) {
+            event.preventDefault();
+            $('#products .item').removeClass('list-group-item');
+            $('#products .item').addClass('grid-group-item');
+        });
+        if (@ViewBag.carsNum==0) {
+            $('#alert').text("The search came back with 0 results");
+            $('#alerti').toggle();
+        }
+        $("#startDate").change(function () {
+            $("#startDate").css("borderColor","green").popover('destroy');
+            $.post('InitStartDate', { startDate: document.getElementById("startDate").value });
+        });
+        $("#endDate").change(function () {
+            $("#endDate").css("borderColor","green").popover('destroy');
+            $.post('InitEndDate', { endDate: document.getElementById("endDate").value });
+        });
+        @*var temp;
+        var models="@ViewBag.serie";
+        models=models.slice(0,-1);
+        var modelsArray=models.split(",");*@
+        //$("#slctSerie").change(function () {
+        //    $("#slctNom")
+        //        .empty()
+        //        .removeAttr('readonly')
+        //        .append($("<option></option>")
+        //        .attr({"value":"","disabled":"disabled", "selected":"selected", "hidden":"hidden"})
+        //        .text("Model"));
+        //    if ($("#slctNom").val()=="") {
+        //        $.each(modelsArray,function (i,value) {
+        //            temp=value.split(" ");
+        //            $("#slctSerie").append($("<option></option>")
+        //                .attr("value",temp[1])
+        //                .text(value));
+        //        });
+        //    }
+        //    else {
+        //        $.each(modelsArray,function (i,value) {
+        //            temp=value.split(" ");
+        //            if (temp[0] == $("#slctNom").val()) {
+        //                $("#slctSerie").append($("<option></option>")
+        //                    .attr("value",temp[1])
+        //                    .text(temp[1]));
+        //            }
+        //        });
+        //    }
+        //});
+    });
+</script>
+
+
+
+<div class="container">
+    <div class="well well-sm">
+        <strong>Cars</strong><br />
+        <div class="btn-group">
+            <a href="#" id="list" class="btn btn-default btn-sm">
+                <span class="glyphicon glyphicon-th-list">
+                </span>List
+            </a> <a href="#" id="grid" class="btn btn-default btn-sm">
+                <span class="glyphicon glyphicon-th"></span>Grid
+            </a>
+        </div>
+    </div>
+
+    <div class="input-daterange input-group" id="datepicker">
+        <span class="input-group-addon">Date debut</span>
+        <input type="text" class="input-sm form-control"
+               name="startDate" id="startDate" placeholder="Start Date" />
+        <span class="input-group-addon">Date Fin</span>
+        <input type="text" class="input-sm form-control"
+               name="endDate" id="endDate" placeholder="End Date" />
+    </div>
+    <br />
+
+    <table style="width: 100%; margin-left: auto; margin-right: auto;">
+        <tbody>
+            <tr>
+                <td>
+                    <div style='width:70%; margin-left:0%'>
+                        <select class="form-control" id="slctGear" oninput="sendFilter()">
+                            <option disabled selected hidden>Carburant</option>
+                            <option value="0">ALL</option>
+                            <option value="1">MANUAL</option>
+                            <option value="2">AUTOMATIC</option>
+                        </select>
+                    </div>
+                </td>
+                <td>
+                    <div style='width:70%; margin-left:0%'>
+                        <select class="form-control" id="slctType" oninput="sendFilter()">
+                            <option disabled selected hidden>Categorie</option>
+                            <option value="0">ALL</option>
+                            @foreach (var item in ViewBag.type)
+                            {
+                                <option value="@item">@item</option>
+                            }
+                        </select>
+                    </div>
+                </td>
+                <td>
+                    <div style='width:70%; margin-left:0%'>
+                        <select class="form-control" id="slctNom" oninput="sendFilter()">
+                            <option value="" disabled selected hidden="hidden">Modele</option>
+                            <option value="">ALL</option>
+                            @foreach (var item in ViewBag.nom)
+                            {
+                                <option value="@item">@item</option>
+                            }
+                        </select>
+                    </div>
+                </td>
+                <td>
+                    <div style='width:70%; margin-left:0%'>
+                        <select class="form-control" id="slctSerie" oninput="sendFilter()">
+                            <option value="" disabled selected hidden="hidden">Serie</option>
+                            <option value="">ALL</option>
+                            @foreach (var item in ViewBag.serie)
+                            {
+                                <option value="@item">@item</option>
+                            }
+                        </select>
+                    </div>
+                </td>
+                @*<td>
+                    <div style='width:70%; margin-left:0%'>
+                        <select readonly class="form-control" id="slctSerie" oninput="sendFilter()">
+                            <option value="" disabled="disabled" selected="selected" hidden>Serie</option>
+                        </select>
+                    </div>
+                </td>*@
+            </tr>
+        </tbody>
+    </table>
+
+    <table style="width: 100%; margin-left: 0%; margin-top: 15px;">
+        <tbody>
+            <tr>
+                <td>
+                    <div style='width:100%; margin-left:0%'>
+                        <input type="text" class="form-control" id="txtSearch" name="txtSearch" placeholder="Free text" value="" onblur="sendFilter()" />
+                    </div>
+                </td>
+                <td>
+                    <div style='width:77%; margin-right:0%'>
+                        <a href="ListeVoitures">
+                            <input type="button" class="btn btn-group-justified" name="name" value="search" />
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <br />
+    <div id="products" class="row list-group">
+        <div class="alert alert-warning" id="alerti" style="display:none">
+            <strong id="alert"></strong>
+        </div>
+        @foreach (var item in Model)
+        {
+            <div class="item  col-xs-4 col-lg-4">
+                <div class="thumbnail">
+                    <img style="max-height:150px;" class="group list-group-image" src="/Voitures/ImageVoiture/@item.voitureID" alt="@item.Modele.nom  picture" />
+                    <div class="caption">
+                        <h4 class="group inner list-group-item-heading">
+                            @item.Modele.nom
+                        </h4>
+                        <div class="row">
+                            <div class="col-xs-12 col-md-6">
+                                <p class="lead">
+                                    @item.prix_Par_Jour DH / jour
+                                </p>
+                            </div>
+                            <div class="col-xs-12 col-md-6">
+                                @Html.ActionLink("Continue", "Details", new { id = item.voitureID },
+                               htmlAttributes: new { @class = "btn btn-primary", @onclick = "return validate('" + item.modeleID + "','" + item.categorieID + "')" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>}
+    </div>
+
+
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            @if (ViewBag.current == 1)
+            {
+                <li class="page-item disabled">
+                    <span class="page-link">Previous</span>
+                </li>
+            }
+            else
+            {
+                <li class="page-item">
+                    <a class="page-link" href="/Voitures/ListeVoitures?skip=@(ViewBag.current-1)">Previous</a>
+                </li>
+            }
+            @for (int i = 1; i < ViewBag.pages + 1; i++)
+            {
+                if (i == ViewBag.current)
+                {
+                    <li class="page-item active">
+                        <span class="page-link">
+                            @i
+                            <span class="sr-only">(current)</span>
+                        </span>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item"><a class="page-link" href="/Voitures/ListeVoitures?skip=@i">@i</a></li>
+                }
+
+            }
+            @if (ViewBag.current == ViewBag.pages)
+            {
+                <li class="page-item disabled">
+                    <span class="page-link">Next</span>
+                </li>
+            }
+            else
+            {
+                <li class="page-item">
+                    <a class="page-link" href="/Voitures/ListeVoitures?skip=@(ViewBag.current+1)">Next</a>
+                </li>
+            }
+        </ul>
+    </nav>
+
+</div>

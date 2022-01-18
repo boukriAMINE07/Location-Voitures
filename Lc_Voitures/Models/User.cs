@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Lc_Voitures.Models
 {
@@ -17,8 +18,7 @@ namespace Lc_Voitures.Models
         public int tele { get; set; }
         [Required]
         [EmailAddress]
-
-
+        
         public string email { get; set; }
         [Required]
         public string password { get; set; }

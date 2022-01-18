@@ -10,7 +10,7 @@
 <p>
     @Html.ActionLink("Créer un nouveau", "Create", null, new { @class = "btn btn-outline-dark" })
 </p>
-<table class="table table-striped table-hover">
+<table class="table table-hover  ">
     <tr>
 
         <th>
@@ -37,7 +37,7 @@
         <th>
             @Html.DisplayNameFor(model => model.image)
         </th>
-        <th></th>
+        <th>ACTION</th>
     </tr>
 
 @foreach (var item in Model) {
@@ -65,7 +65,7 @@
         @Html.DisplayFor(modelItem => item.carburant)
     </td>
     <td>
-        <img src="/Voitures/ImageVoiture/@item.voitureID" alt="" height=120 width=200 />
+        <img src="/Voitures/ImageVoiture/@item.voitureID" alt="" style="width: 250px; max-width: 200px" />
     </td>
     <td>
         <div class="btn-group">
