@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>ListeVoitures</h2>
+<br />
 <style>
     .glyphicon {
         margin-right: 5px;
@@ -74,7 +74,7 @@
             $("#endDate").css({"borderColor":"red","border-width":"thick"});
             $("#startDate").popover({
                 title: 'Warning!',
-                content: 'date must be filled',
+                content: 'la date doit être remplie',
                 placement: 'bottom'
             }).popover('show');
             $('html, body').animate({
@@ -86,7 +86,7 @@
             $("#startDate").css({"borderColor":"red","border-width":"thick"});
             $("#startDate").popover({
                 title: 'Warning!',
-                content: 'date must be filled',
+                content: 'la date doit être remplie',
                 placement: 'bottom'
             }).popover('show');
             $('html, body').animate({
@@ -116,10 +116,8 @@
         }
     }
     function sendFilter() {
-        var gear = $('#slctGear').val();
-        if (gear == null) {
-            gear = "0";
-        }
+        var carb = $('#slctCarb').val();
+        
         var type = $('#slctType').val();
        
         var nom = $('#slctNom').val();
@@ -128,7 +126,7 @@
 
 
         $.post('InitFilter',
-            { filtercarburant: gear, type: type, nom: nom, serie: serie});
+            { filtercarburant: carb,type: type, nom: nom, serie: serie});
     }
     $(document).ready(function () {
         $('#datepicker').datepicker({
@@ -167,36 +165,7 @@
             $("#endDate").css("borderColor","green").popover('destroy');
             $.post('InitEndDate', { endDate: document.getElementById("endDate").value });
         });
-        @*var temp;
-        var models="@ViewBag.serie";
-        models=models.slice(0,-1);
-        var modelsArray=models.split(",");*@
-        //$("#slctSerie").change(function () {
-        //    $("#slctNom")
-        //        .empty()
-        //        .removeAttr('readonly')
-        //        .append($("<option></option>")
-        //        .attr({"value":"","disabled":"disabled", "selected":"selected", "hidden":"hidden"})
-        //        .text("Model"));
-        //    if ($("#slctNom").val()=="") {
-        //        $.each(modelsArray,function (i,value) {
-        //            temp=value.split(" ");
-        //            $("#slctSerie").append($("<option></option>")
-        //                .attr("value",temp[1])
-        //                .text(value));
-        //        });
-        //    }
-        //    else {
-        //        $.each(modelsArray,function (i,value) {
-        //            temp=value.split(" ");
-        //            if (temp[0] == $("#slctNom").val()) {
-        //                $("#slctSerie").append($("<option></option>")
-        //                    .attr("value",temp[1])
-        //                    .text(temp[1]));
-        //            }
-        //        });
-        //    }
-        //});
+       
     });
 </script>
 
@@ -204,7 +173,7 @@
 
 <div class="container">
     <div class="well well-sm">
-        <strong>Cars</strong><br />
+        <strong>Voitures</strong><br />
         <div class="btn-group">
             <a href="#" id="list" class="btn btn-default btn-sm">
                 <span class="glyphicon glyphicon-th-list">
@@ -218,10 +187,10 @@
     <div class="input-daterange input-group" id="datepicker">
         <span class="input-group-addon">Date debut</span>
         <input type="text" class="input-sm form-control"
-               name="startDate" id="startDate" placeholder="Start Date" />
+               name="startDate" id="startDate" placeholder="Date Debut" />
         <span class="input-group-addon">Date Fin</span>
         <input type="text" class="input-sm form-control"
-               name="endDate" id="endDate" placeholder="End Date" />
+               name="endDate" id="endDate" placeholder=" Date Fin" />
     </div>
     <br />
 
@@ -230,7 +199,7 @@
             <tr>
                 <td>
                     <div style='width:70%; margin-left:0%'>
-                        <select class="form-control" id="slctGear" oninput="sendFilter()">
+                        <select class="form-control" id="slctCarb" oninput="sendFilter()">
                             <option disabled selected hidden>Carburant</option>
                             <option value="0">ALL</option>
                             <option value="1">MANUAL</option>
@@ -290,7 +259,7 @@
             <tr>
                 <td>
                     <div style='width:100%; margin-left:0%'>
-                        <input type="text" class="form-control" id="txtSearch" name="txtSearch" placeholder="Free text" value="" onblur="sendFilter()" />
+                        <input type="text" class="form-control" id="txtSearch" name="txtSearch" placeholder="Search" value="" onblur="sendFilter()" />
                     </div>
                 </td>
                 <td>
@@ -374,9 +343,9 @@
             }
             else
             {
-                <li class="page-item">
-                    <a class="page-link" href="/Voitures/ListeVoitures?skip=@(ViewBag.current+1)">Next</a>
-                </li>
+            <li class="page-item">
+                <a class="page-link" href="/Voitures/ListeVoitures?skip=@(ViewBag.current+1)">Next</a>
+            </li>
             }
         </ul>
     </nav>

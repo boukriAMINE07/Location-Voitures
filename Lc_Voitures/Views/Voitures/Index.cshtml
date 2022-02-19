@@ -5,14 +5,18 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<h2 style="color: #6c757d;">Voiture</h2>
+<br />
 
 <p>
     @Html.ActionLink("Créer un nouveau", "Create", null, new { @class = "btn btn-outline-dark" })
 </p>
+<br />
 <table class="table table-hover  ">
     <tr>
-
+        <th>
+            @Html.DisplayNameFor(model => model.image)
+        </th>
         <th>
             @Html.DisplayNameFor(model => model.Modele.nom)
         </th>
@@ -34,51 +38,51 @@
         <th>
             @Html.DisplayNameFor(model => model.carburant)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.image)
-        </th>
+
         <th>ACTION</th>
     </tr>
 
-@foreach (var item in Model) {
-<tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                <img src="/Voitures/ImageVoiture/@item.voitureID" alt="" style="width: 250px; max-width: 200px" />
+            </td>
 
-    <td>
-        @Html.DisplayFor(modelItem => item.Modele.nom)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.Modele.serie)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.matricule)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.Categorie.type)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.date_Mise_En_Circulation)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.prix_Par_Jour)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.carburant)
-    </td>
-    <td>
-        <img src="/Voitures/ImageVoiture/@item.voitureID" alt="" style="width: 250px; max-width: 200px" />
-    </td>
-    <td>
-        <div class="btn-group">
+            <td>
+                @Html.DisplayFor(modelItem => item.Modele.nom)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Modele.serie)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.matricule)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Categorie.type)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.date_Mise_En_Circulation)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.prix_Par_Jour)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.carburant)
+            </td>
 
-            @Html.ActionLink("Modifier", "Edit", new { id = item.voitureID }, new { @class = "btn btn-outline-primary" })
-            @Html.ActionLink("Details", "Details", new { id = item.voitureID }, new { @class = "btn btn-outline-success" })
-            @Html.ActionLink("Supprimer", "Delete", new { id = item.voitureID }, new { @class = "btn btn-outline-danger" })
+            <td>
+                <div class="btn-group">
+
+                    @Html.ActionLink("Modifier", "Edit", new { id = item.voitureID }, new { @class = "btn btn-outline-primary" })
+                    @Html.ActionLink("Details", "Details", new { id = item.voitureID }, new { @class = "btn btn-outline-success" })
+                    @Html.ActionLink("Supprimer", "Delete", new { id = item.voitureID }, new { @class = "btn btn-outline-danger" })
 
 
-        </div>
-        
-    </td>
-</tr>
-}
+                </div>
+
+            </td>
+        </tr>
+    }
 
 </table>

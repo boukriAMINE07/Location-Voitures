@@ -5,57 +5,67 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<h2 style="color: #6c757d;">Réservation</h2>
+<br />
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Créer un nouveau", "Create", null, new { @class = "btn btn-outline-dark" })
 </p>
+<br />
+
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.User.nom_Complet)
+            NOM
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Voiture.matricule)
+            MATRICULE
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Voiture.Modele.nom)
+            MODELE
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.StartDate)
+            SERIE
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.EndDate)
+            DATE DEBUT
         </th>
-        <th></th>
+        <th>
+           DATE FIN
+        </th>
+        <th>Action</th>
     </tr>
 
-@foreach (var item in Model) {
-<tr>
-    <td>
-        @Html.DisplayFor(modelItem => item.User.nom_Complet)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.Voiture.matricule)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.Voiture.Modele.nom)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.StartDate)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.EndDate)
-    </td>
-    <td>
-        <div class="btn-group">
-            @Html.ActionLink("Modifier", "Edit", new { id = item.locationID }, new { @class = "btn btn-outline-primary" })
-            @Html.ActionLink("Details", "Details", new { id = item.locationID }, new { @class = "btn btn-outline-success" })
-            @Html.ActionLink("Supprimer", "Delete", new { id = item.locationID }, new { @class = "btn btn-outline-danger" })
-        </div>
-        
-    </td>
-</tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.nom_Complet)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Voiture.matricule)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Voiture.Modele.nom)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Voiture.Modele.serie)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndDate)
+            </td>
+            <td>
+                <div class="btn-group">
+                    @Html.ActionLink("Modifier", "Edit", new { id = item.locationID }, new { @class = "btn btn-outline-primary" })
+                    @Html.ActionLink("Details", "Details", new { id = item.locationID }, new { @class = "btn btn-outline-success" })
+                    @Html.ActionLink("Supprimer", "Delete", new { id = item.locationID }, new { @class = "btn btn-outline-danger" })
+                </div>
+
+            </td>
+        </tr>
+    }
 
 </table>

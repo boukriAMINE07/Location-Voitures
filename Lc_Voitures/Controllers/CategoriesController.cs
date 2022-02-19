@@ -6,17 +6,20 @@ using System.Web.Mvc;
 
 namespace Lc_Voitures.Controllers
 {
+    [Authorize]
     public class CategoriesController : Controller
     {
         private LocationDB db = new LocationDB();
 
         // GET: Categories
+        [AllowAnonymous]
         public ActionResult Index()
         {
             return View(db.Categories.ToList());
         }
 
         // GET: Categories/Details/5
+        [AllowAnonymous]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -34,7 +37,18 @@ namespace Lc_Voitures.Controllers
         // GET: Categories/Create
         public ActionResult Create()
         {
-            return View();
+            string emailId = System.Web.HttpContext.Current.User.Identity.Name;
+            if (emailId != "")
+            {
+                bool isAdmin = db.Users.FirstOrDefault(t => t.email == emailId).IsAdmin;
+                if (isAdmin)
+                {
+                    return View();
+
+                }
+
+            }
+            return RedirectToAction("Index");
         }
 
         // POST: Categories/Create
@@ -57,16 +71,29 @@ namespace Lc_Voitures.Controllers
         // GET: Categories/Edit/5
         public ActionResult Edit(int? id)
         {
-            if (id == null)
+            string emailId = System.Web.HttpContext.Current.User.Identity.Name;
+            if (emailId != "")
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                bool isAdmin = db.Users.FirstOrDefault(t => t.email == emailId).IsAdmin;
+                if (isAdmin)
+                {
+                    if (id == null)
+                    {
+                        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                    }
+                    Categorie categorie = db.Categories.Find(id);
+                    if (categorie == null)
+                    {
+                        return HttpNotFound();
+                    }
+                    return View(categorie);
+
+                }
+
             }
-            Categorie categorie = db.Categories.Find(id);
-            if (categorie == null)
-            {
-                return HttpNotFound();
-            }
-            return View(categorie);
+            return RedirectToAction("Index");
+
+            
         }
 
         // POST: Categories/Edit/5
@@ -88,16 +115,29 @@ namespace Lc_Voitures.Controllers
         // GET: Categories/Delete/5
         public ActionResult Delete(int? id)
         {
-            if (id == null)
+            string emailId = System.Web.HttpContext.Current.User.Identity.Name;
+            if (emailId != "")
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                bool isAdmin = db.Users.FirstOrDefault(t => t.email == emailId).IsAdmin;
+                if (isAdmin)
+                {
+                    if (id == null)
+                    {
+                        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                    }
+                    Categorie categorie = db.Categories.Find(id);
+                    if (categorie == null)
+                    {
+                        return HttpNotFound();
+                    }
+                    return View(categorie);
+
+                }
+
             }
-            Categorie categorie = db.Categories.Find(id);
-            if (categorie == null)
-            {
-                return HttpNotFound();
-            }
-            return View(categorie);
+            return RedirectToAction("Index");
+
+           
         }
 
         // POST: Categories/Delete/5

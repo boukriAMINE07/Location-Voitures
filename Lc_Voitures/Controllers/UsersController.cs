@@ -14,10 +14,25 @@ namespace Lc_Voitures.Controllers
         private LocationDB db = new LocationDB();
 
         // GET: Users
+        [Authorize]
         public ActionResult Index()
         {
-            var users = db.Users.ToList();
-            return View(users);
+            string emailId = System.Web.HttpContext.Current.User.Identity.Name;
+            if (emailId != "")
+            {
+                bool isAdmin = db.Users.FirstOrDefault(t => t.email == emailId).IsAdmin;
+                if (isAdmin)
+                {
+                    var users = db.Users.ToList();
+                    return View(users);
+
+                }
+                
+
+            }
+            return Redirect("/Voitures/ListeVoitures");
+
+            
         }
         public ActionResult ImageCIN(int id)
         {
@@ -73,19 +88,21 @@ namespace Lc_Voitures.Controllers
         }
 
         // GET: Users/Create
+        
         public ActionResult Create()
         {
 
             string emailId = System.Web.HttpContext.Current.User.Identity.Name;
             if (emailId != "")
             {
-                User user = db.Users.Find(emailId);
+                var user_ID = db.Users.SingleOrDefault(u => u.email.ToLower() == emailId.ToLower());
+                User user = db.Users.Find(user_ID.userID);
 
                 if (user.IsAdmin)
                 {
-                    return View("CreateAdmin");
+                    return RedirectToAction("CreateAdmin");
                 }
-                return Redirect("Users/index");
+                return Redirect("/Voitures/ListeVoitures");
             }
             return View();
         }
@@ -119,13 +136,18 @@ namespace Lc_Voitures.Controllers
 
             return View(user);
         }
-
+        [Authorize]
         
         public ActionResult CreateAdmin()
         {
+            string userId = System.Web.HttpContext.Current.User.Identity.Name;
+            User user = db.Users.FirstOrDefault(t => t.email == userId);
+            if (user.IsAdmin)
+            {
+                return View();
+            }
+            return Redirect("/Voitures/ListeVoitures");
 
-            return View();
-           
 
 
         }
@@ -139,6 +161,7 @@ namespace Lc_Voitures.Controllers
                 return View(user);
             }
             string emailId = System.Web.HttpContext.Current.User.Identity.Name;
+            
             if (ModelState.IsValid)
             {
                 db.Users.Add(user);
@@ -147,9 +170,9 @@ namespace Lc_Voitures.Controllers
                 {
                     FormsAuthentication.SetAuthCookie(user.email, false);
                 }
-                User authUser = db.Users.Find(user.email);
+                User authUser = db.Users.Find(user.userID);
                 SaveSession(authUser);
-                return View("Index");
+                return RedirectToAction("Index");
             }
             return View(user);
 
@@ -159,18 +182,32 @@ namespace Lc_Voitures.Controllers
 
 
         // GET: Users/Edit/5
+        [Authorize]
         public ActionResult Edit(int? id)
         {
-            if (id == null)
+            string emailId = System.Web.HttpContext.Current.User.Identity.Name;
+            if (emailId != "")
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                bool isAdmin = db.Users.FirstOrDefault(t => t.email == emailId).IsAdmin;
+                if (isAdmin)
+                {
+                    if (id == null)
+                    {
+                        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                    }
+                    User user = db.Users.Find(id);
+                    if (user == null)
+                    {
+                        return HttpNotFound();
+                    }
+                    return View(user);
+
+                }
+
             }
-            User user = db.Users.Find(id);
-            if (user == null)
-            {
-                return HttpNotFound();
-            }
-            return View(user);
+            return Redirect("/Voitures/ListeVoitures");
+
+            
         }
 
         // POST: Users/Edit/5
@@ -180,6 +217,10 @@ namespace Lc_Voitures.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "userID,nom_Complet,date_Naissance,tele,email,password,image_CIN,image_Permis")] User user)
         {
+            HttpPostedFileBase file2 = Request.Files["ImageDataPermis"];
+            HttpPostedFileBase file1 = Request.Files["ImageDataCIN"];
+            ContentRepository service = new ContentRepository();
+            service.UploadImageInDataBase(file1, file2, user);
             if (ModelState.IsValid)
             {
                 db.Entry(user).State = EntityState.Modified;
@@ -190,18 +231,33 @@ namespace Lc_Voitures.Controllers
         }
 
         // GET: Users/Delete/5
+        [Authorize]
         public ActionResult Delete(int? id)
         {
-            if (id == null)
+            string emailId = System.Web.HttpContext.Current.User.Identity.Name;
+            if (emailId != "")
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                bool isAdmin = db.Users.FirstOrDefault(t => t.email == emailId).IsAdmin;
+                if (isAdmin)
+                {
+                    if (id == null)
+                    {
+                        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                    }
+                    User user = db.Users.Find(id);
+                    if (user == null)
+                    {
+                        return HttpNotFound();
+                    }
+                    return View(user);
+
+                }
+
             }
-            User user = db.Users.Find(id);
-            if (user == null)
-            {
-                return HttpNotFound();
-            }
-            return View(user);
+            return Redirect("/Voitures/ListeVoitures");
+
+
+           
         }
 
         // POST: Users/Delete/5
@@ -230,7 +286,7 @@ namespace Lc_Voitures.Controllers
                 SaveAuthSession(email, user);
                 if (returnUrl == "" || returnUrl == null)
                 {
-                    return Redirect("/Voitures/index");
+                    return Redirect("/Voitures/ListeVoitures");
                 }
                 return Redirect(returnUrl);
 
@@ -242,6 +298,9 @@ namespace Lc_Voitures.Controllers
         {
             FormsAuthentication.SetAuthCookie(user.email, false);
             Session["authname"] = email;
+            Session["userId"] = user.userID;
+            Session["userName"] = user.nom_Complet;
+
             if (user.IsAdmin)
             {
                 Session["authrole"] = "Admin";
@@ -257,6 +316,7 @@ namespace Lc_Voitures.Controllers
         {
             Session["userId"] = authUser.userID;
             Session["authname"] = authUser.email;
+            Session["userName"] = authUser.nom_Complet;
             if (authUser.IsAdmin)
             {
                 Session["authrole"] = "Admin";
@@ -281,7 +341,7 @@ namespace Lc_Voitures.Controllers
         {
             Session.Clear();
             FormsAuthentication.SignOut();
-            return Redirect("/Voitures/Index");
+            return Redirect("/Voitures/ListeVoitures");
         }
 
         protected override void Dispose(bool disposing)

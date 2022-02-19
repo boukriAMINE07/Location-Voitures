@@ -6,19 +6,24 @@ using System.Web.Mvc;
 
 namespace Lc_Voitures.Controllers
 {
+    [Authorize]
     public class ModelesController : Controller
     {
         private LocationDB db = new LocationDB();
 
         // GET: Modeles
+        [AllowAnonymous]
         public ActionResult Index()
         {
             return View(db.Modeles.ToList());
         }
 
         // GET: Modeles/Details/5
+        [AllowAnonymous]
+
         public ActionResult Details(int? id)
         {
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -34,7 +39,18 @@ namespace Lc_Voitures.Controllers
         // GET: Modeles/Create
         public ActionResult Create()
         {
-            return View();
+            string emailId = System.Web.HttpContext.Current.User.Identity.Name;
+            if (emailId != "")
+            {
+                bool isAdmin = db.Users.FirstOrDefault(t => t.email == emailId).IsAdmin;
+                if (isAdmin)
+                {
+                    return View();
+
+                }
+                
+            }
+            return RedirectToAction("Index");
         }
 
         // POST: Modeles/Create
@@ -57,16 +73,28 @@ namespace Lc_Voitures.Controllers
         // GET: Modeles/Edit/5
         public ActionResult Edit(int? id)
         {
-            if (id == null)
+            string emailId = System.Web.HttpContext.Current.User.Identity.Name;
+            if (emailId != "")
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                bool isAdmin = db.Users.FirstOrDefault(t => t.email == emailId).IsAdmin;
+                if (isAdmin)
+                {
+                    if (id == null)
+                    {
+                        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                    }
+                    Modele modele = db.Modeles.Find(id);
+                    if (modele == null)
+                    {
+                        return HttpNotFound();
+                    }
+                    return View(modele);
+
+                }
+
             }
-            Modele modele = db.Modeles.Find(id);
-            if (modele == null)
-            {
-                return HttpNotFound();
-            }
-            return View(modele);
+            return RedirectToAction("Index");
+           
         }
 
         // POST: Modeles/Edit/5
@@ -88,16 +116,31 @@ namespace Lc_Voitures.Controllers
         // GET: Modeles/Delete/5
         public ActionResult Delete(int? id)
         {
-            if (id == null)
+            string emailId = System.Web.HttpContext.Current.User.Identity.Name;
+            if (emailId != "")
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                bool isAdmin = db.Users.FirstOrDefault(t => t.email == emailId).IsAdmin;
+                if (isAdmin)
+                {
+                    if (id == null)
+                    {
+                        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                    }
+                    Modele modele = db.Modeles.Find(id);
+                    if (modele == null)
+                    {
+                        return HttpNotFound();
+                    }
+                    return View(modele);
+
+                }
+
             }
-            Modele modele = db.Modeles.Find(id);
-            if (modele == null)
-            {
-                return HttpNotFound();
-            }
-            return View(modele);
+            return RedirectToAction("Index");
+
+            
+
+            
         }
 
         // POST: Modeles/Delete/5

@@ -5,53 +5,134 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Delete</h2>
+<h2 style="color: #6c757d;">Réservation</h2>
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Location</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.User.nom_Complet)
-        </dt>
 
-        <dd>
+
+<hr />
+<br />
+
+<h3 style="color: #e31919;">Êtes-vous sûr de vouloir supprimer ceci ?</h3>
+
+
+@*<div>
+        <h4>Location</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.User.nom_Complet)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.User.nom_Complet)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Voiture.matricule)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Voiture.matricule)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.StartDate)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.StartDate)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.EndDate)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.EndDate)
+            </dd>
+
+        </dl>
+
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-actions no-color">
+                <input type="submit" value="Delete" class="btn btn-default" /> |
+                @Html.ActionLink("Back to List", "Index")
+            </div>
+        }
+    </div>*@
+
+<table class="table table-striped table-hover  ">
+    <tr>
+        <th>
+            Utilisateur
+        </th>
+        <th>
+            Voiture
+        </th>
+        <th>
+            Matricule
+        </th>
+        <th>
+            Date Debut
+        </th>
+
+        <th>
+            Date Fin
+        </th>
+
+        <th>
+            Action
+        </th>
+
+
+
+    </tr>
+    <tr>
+        <td>
             @Html.DisplayFor(model => model.User.nom_Complet)
-        </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Voiture.matricule)
-        </dt>
-
-        <dd>
+        </td>
+        <td>
+            @Html.DisplayFor(model => model.Voiture.Modele.nom)
+        </td>
+        <td>
             @Html.DisplayFor(model => model.Voiture.matricule)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.StartDate)
-        </dt>
-
-        <dd>
+        </td>
+        <td>
             @Html.DisplayFor(model => model.StartDate)
-        </dd>
+        </td>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.EndDate)
-        </dt>
 
-        <dd>
+        <td>
+
             @Html.DisplayFor(model => model.EndDate)
-        </dd>
+        </td>
 
-    </dl>
 
-    @using (Html.BeginForm()) {
-        @Html.AntiForgeryToken()
+        <td>
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
 
-        <div class="form-actions no-color">
-            <input type="submit" value="Delete" class="btn btn-default" /> |
-            @Html.ActionLink("Back to List", "Index")
-        </div>
-    }
-</div>
+            <div class="form-actions no-color">
+                <input type="submit" value="Delete" class="btn btn-outline-danger" />
+                @Html.ActionLink("Annuler", "Index", new { id = Model.locationID }, new { @class = "btn btn-outline-dark" })
+            </div>
+            }
+
+        </td>
+    </tr>
+</table>
+
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />

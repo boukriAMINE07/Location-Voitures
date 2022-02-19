@@ -18,10 +18,16 @@
             var authid = "@Session["authname"]";
             var authrole = "@Session["authrole"]";
             if (authid == "") {
+                
                 $("#notsigned").show();
             }
             else {
-                $("#signed").show();
+                if (authrole == "Admin") {
+                    $("#signedAdmin").show();
+                } else {
+                    $("#signed").show();
+                }
+                
             }
 
 
@@ -37,44 +43,83 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <i> @Html.ActionLink("YourCar", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })</i>
+                <a class="navbar-brand" href="/Home/Index">
+                    <img style="max-width:90px; margin-top: -7px" alt="Brand Logo" src="~/Content/images/logo.png">
+                </a>
             </div>
             <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Voitures", "ListeVoitures", "Voitures")</li>
-                    <li>@Html.ActionLink("User", "Index", "Users")</li>
-                    <li>@Html.ActionLink("Cotegorie", "Index", "categories")</li>
-                    <li>@Html.ActionLink("Modele", "Index", "Modeles")</li>
-                    <li>@Html.ActionLink("Location", "Index", "Locations")</li>
-                </ul>
+                <div id="notsigned" hidden="hidden">
+                    <ul class="nav navbar-nav">
+                        <li>@Html.ActionLink("Voitures", "ListeVoitures", "Voitures")</li>
+                        <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+  
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="/Users/Create"><span class="glyphicon glyphicon-user"></span> S'inscrire</a></li>
+
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" href="/Users/login"><span class="glyphicon glyphicon-log-in"></span> Connexion</a>
+
+                        </li>
+                    </ul>
+                </div>
+                <div id="signed" hidden="hidden">
+                    <ul class="nav navbar-nav">
+                        <li>@Html.ActionLink("Accueil", "Index", "Home")</li>
+                        <li>@Html.ActionLink("Voitures", "ListeVoitures", "Voitures")</li>
+                        <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                        <li>@Html.ActionLink("Profil", "Details/" + Session["userId"], "Users")</li>
 
 
-                <ul class="nav navbar-nav navbar-right" id="notsigned" hidden="hidden">
-                    <li><a href="/Users/Create"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                <center>
+                                    HELLO @Session["userName"] | @Session["authrole"]
 
-                    <li class="dropdown">
-                        <a class="dropdown-toggle" href="/Users/login"><span class="glyphicon glyphicon-log-in"></span> Login</a>
+                                    <span class="caret"></span>
+                                </center>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="/Users/Details/@Session["userId"]">PROFIL</a></li>
 
-                    </li>
-                </ul>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="/Users/logout">Logout</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
 
-                <ul class="nav navbar-nav navbar-right" id="signed" hidden="hidden">
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                            <center>
-                                Hello @Session["authname"] | @Session["authrole"]
+                <div id="signedAdmin" hidden="hidden">
+                    <ul class="nav navbar-nav">
 
-                                <span class="caret"></span>
-                            </center>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a href="/Users/Details">PROFIL</a></li>
-                            @*<li id="workers" hidden="hidden"><a href="/cars/workers">WORKERS ACTIONS</a></li>*@
-                            <li role="separator" class="divider"></li>
-                            <li><a href="/Users/logout">Logout</a></li>
-                        </ul>
-                    </li>
-                </ul>
+                        <li>@Html.ActionLink("Voitures", "ListeVoitures", "Voitures")</li>
+                        <li>@Html.ActionLink("Utilisateur", "Index", "Users")</li>
+                        <li>@Html.ActionLink("Cotegorie", "Index", "categories")</li>
+                        <li>@Html.ActionLink("Modele", "Index", "Modeles")</li>
+                        <li>@Html.ActionLink("Reservation", "Index", "Locations")</li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                <center>
+                                    HELLO @Session["userName"] | @Session["authrole"]
+
+                                    <span class="caret"></span>
+                                </center>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="/Users/Details/@Session["userId"]">PROFIL</a></li>
+
+                                <li role="separator" class="divider"></li>
+                                <li><a href="/Users/logout">Logout</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+
             </div>
         </div>
     </div>

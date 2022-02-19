@@ -5,7 +5,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<h2 style="color: #6c757d;">Utilisateur</h2>
+<br />
 
 <p>
     @Html.ActionLink("Créer un nouveau", "Create", null, new { @class = "btn btn-outline-dark" })
@@ -24,7 +25,7 @@
         <th>
             @Html.DisplayNameFor(model => model.email)
         </th>
-        
+
         <th>
             @Html.DisplayNameFor(model => model.image_CIN)
         </th>
@@ -37,44 +38,45 @@
         <th>ACTION</th>
     </tr>
 
-@foreach (var item in Model) {
-<tr>
-    <td>
-        @Html.DisplayFor(modelItem => item.nom_Complet)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.date_Naissance)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.tele)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.email)
-    </td>
-    
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.nom_Complet)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.date_Naissance)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.tele)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.email)
+            </td>
 
 
-    <td>
-        <img src="/Users/ImageCIN/@item.userID" alt="" height=80 width=120 />
-    </td>
-    <td>
-        <img src="/Users/ImagePermis/@item.userID" alt="" height=80 width=120 />
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.IsAdmin)
-    </td>
-    <td>
-        <div class="btn-group">
 
-            @Html.ActionLink("Modifier", "Edit", new { id = item.userID }, new { @class = "btn btn-outline-primary" }) 
-            @Html.ActionLink("Details", "Details", new { id = item.userID }, new { @class = "btn btn-outline-success" }) 
-            @Html.ActionLink("Supprimer", "Delete", new { id = item.userID }, new { @class = "btn btn-outline-danger" })
+            <td>
+                <img src="/Users/ImageCIN/@item.userID" alt="" height=80 width=120 />
+            </td>
+            <td>
+                <img src="/Users/ImagePermis/@item.userID" alt="" height=80 width=120 />
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsAdmin)
+            </td>
+            <td>
+                <div class="btn-group">
 
-            
-        </div>
-        
-    </td>
-</tr>
-}
+                    @Html.ActionLink("Modifier", "Edit", new { id = item.userID }, new { @class = "btn btn-outline-primary" })
+                    @Html.ActionLink("Details", "Details", new { id = item.userID }, new { @class = "btn btn-outline-success" })
+                    @Html.ActionLink("Supprimer", "Delete", new { id = item.userID }, new { @class = "btn btn-outline-danger" })
+
+
+                </div>
+
+            </td>
+        </tr>
+    }
 
 </table>

@@ -11,6 +11,7 @@ using static Lc_Voitures.Models.Categorie;
 
 namespace Lc_Voitures.Controllers
 {
+    
     public class VoituresController : Controller
     {
         private LocationDB db = new LocationDB();
@@ -19,10 +20,23 @@ namespace Lc_Voitures.Controllers
         private static Voiture VoitureFilter = new Voiture();
 
         // GET: Voitures
+        [Authorize]
         public ActionResult Index()
         {
-            var voitures = db.Voitures.Include(v => v.Categorie).Include(v => v.Modele);
-            return View(voitures.ToList());
+            string emailId = System.Web.HttpContext.Current.User.Identity.Name;
+            if (emailId != "")
+            {
+                bool isAdmin = db.Users.FirstOrDefault(t => t.email == emailId).IsAdmin;
+                if (isAdmin)
+                {
+                    var voitures = db.Voitures.Include(v => v.Categorie).Include(v => v.Modele);
+                    return View(voitures.ToList());
+                   
+                }
+                
+            }
+            return Redirect("/Voitures/ListeVoitures");
+
         }
 
         public ActionResult ImageVoiture(int id)
@@ -45,6 +59,7 @@ namespace Lc_Voitures.Controllers
         }
 
         // GET: Voitures/Details/5
+
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -74,12 +89,26 @@ namespace Lc_Voitures.Controllers
         }
 
         // GET: Voitures/Create
+        [Authorize]
         public ActionResult Create()
         {
-            ViewBag.categorieID = new SelectList(db.Categories, "categorieID", "type");
-            ViewBag.modeleID = new SelectList(db.Modeles, "modeleID", "nom").Distinct();
-            ViewBag.modeleSerie = new SelectList(db.Modeles, "modeleID", "serie");
-            return View();
+            string emailId = System.Web.HttpContext.Current.User.Identity.Name;
+            if (emailId != "")
+            {
+                bool isAdmin = db.Users.FirstOrDefault(t => t.email == emailId).IsAdmin;
+                if (isAdmin)
+                {
+                    
+                    ViewBag.categorieID = new SelectList(db.Categories, "categorieID", "type");
+                    ViewBag.modeleID = new SelectList(db.Modeles, "modeleID", "nom").Distinct();
+                    ViewBag.modeleSerie = new SelectList(db.Modeles, "modeleID", "serie");
+                    return View();
+
+                }
+
+            }
+            return RedirectToAction("ListeVoitures");
+
         }
 
         // POST: Voitures/Create
@@ -119,21 +148,36 @@ namespace Lc_Voitures.Controllers
             }
         }
         // GET: Voitures/Edit/5
+        [Authorize]
         public ActionResult Edit(int? id)
         {
-            if (id == null)
+            string emailId = System.Web.HttpContext.Current.User.Identity.Name;
+            if (emailId != "")
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                bool isAdmin = db.Users.FirstOrDefault(t => t.email == emailId).IsAdmin;
+                if (isAdmin)
+                {
+
+                    if (id == null)
+                    {
+                        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                    }
+                    Voiture voiture = db.Voitures.Find(id);
+                    if (voiture == null)
+                    {
+                        return HttpNotFound();
+                    }
+                    ViewBag.categorieID = new SelectList(db.Categories, "categorieID", "type", voiture.categorieID);
+                    ViewBag.modeleID = new SelectList(db.Modeles, "modeleID", "nom", voiture.modeleID);
+                    ViewBag.modeleSerie = new SelectList(db.Modeles, "modeleID", "serie", voiture.modeleID);
+                    return View(voiture);
+
+                }
+
             }
-            Voiture voiture = db.Voitures.Find(id);
-            if (voiture == null)
-            {
-                return HttpNotFound();
-            }
-            ViewBag.categorieID = new SelectList(db.Categories, "categorieID", "type", voiture.categorieID);
-            ViewBag.modeleID = new SelectList(db.Modeles, "modeleID", "nom", voiture.modeleID);
-            ViewBag.modeleSerie = new SelectList(db.Modeles, "modeleID", "serie", voiture.modeleID);
-            return View(voiture);
+            return RedirectToAction("ListeVoitures");
+
+           
         }
 
         // POST: Voitures/Edit/5
@@ -159,18 +203,33 @@ namespace Lc_Voitures.Controllers
         }
 
         // GET: Voitures/Delete/5
+        [Authorize]
         public ActionResult Delete(int? id)
         {
-            if (id == null)
+            string emailId = System.Web.HttpContext.Current.User.Identity.Name;
+            if (emailId != "")
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                bool isAdmin = db.Users.FirstOrDefault(t => t.email == emailId).IsAdmin;
+                if (isAdmin)
+                {
+
+                    if (id == null)
+                    {
+                        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                    }
+                    Voiture voiture = db.Voitures.Find(id);
+                    if (voiture == null)
+                    {
+                        return HttpNotFound();
+                    }
+                    return View(voiture);
+
+                }
+
             }
-            Voiture voiture = db.Voitures.Find(id);
-            if (voiture == null)
-            {
-                return HttpNotFound();
-            }
-            return View(voiture);
+            return RedirectToAction("ListeVoitures");
+
+            
         }
 
         // POST: Voitures/Delete/5
@@ -184,7 +243,6 @@ namespace Lc_Voitures.Controllers
             return RedirectToAction("Index");
         }
 
-
         public ActionResult ListeVoitures(int skip = 1, int take = 6)
         {
             string emailId = System.Web.HttpContext.Current.User.Identity.Name;
@@ -193,7 +251,7 @@ namespace Lc_Voitures.Controllers
                 bool isAdmin = db.Users.FirstOrDefault(t => t.email == emailId).IsAdmin;
                 if (isAdmin)
                 {
-                    return Redirect("/Cars/index");
+                    return Redirect("/Voitures/index");
                 }
             }
             List<Voiture> carTypes;
@@ -243,58 +301,83 @@ namespace Lc_Voitures.Controllers
             if ( VoitureFilter.modeleID  != 0)
             {
                 carTypes = carTypes.
-                    Where(w => w.Modele.nom == VoitureFilter.Modele.nom ).
-                    ToList();
-            }
-            if (VoitureFilter.modeleID != 0)
-            {
-                carTypes = carTypes.
-                    Where( w=>w.Modele.serie == VoitureFilter.Modele.serie).
-                    ToList();
-            }
-            if (VoitureFilter.categorieID != 0 )
-            {
-                carTypes = carTypes.
-                    Where(w => w.Categorie.type  == VoitureFilter.Categorie.type).
+                    Where(w => w.modeleID == VoitureFilter.modeleID ).
                     ToList();
             }
             //if (VoitureFilter.modeleID != 0)
             //{
             //    carTypes = carTypes.
-            //        Where(w => w.Modele.serie == VoitureFilter.Modele.serie).
+            //        Where( w=>w.Modele.serie == VoitureFilter.Modele.serie).
             //        ToList();
             //}
-            //if (VoitureFilter.FreeText != "" && VoitureFilter.FreeText != null)
-            //{
-            //    carTypes = carTypes.
-            //        Where(s => s.ManifacturerName.ToLower().Contains(VoitureFilter.FreeText.ToLower())
-            //        || (s.ModelName.ToLower().Contains(VoitureFilter.FreeText.ToLower()))).
-            //        ToList();
-
-            //}
+            if (VoitureFilter.categorieID != 0 )
+            {
+                carTypes = carTypes.
+                    Where(w => w.categorieID  == VoitureFilter.categorieID).
+                    ToList();
+            }
+           
 
             return carTypes;
         }
+
+        [Authorize]
+        public ActionResult Reservation(int? id)
+        {
+            string emailId = System.Web.HttpContext.Current.User.Identity.Name;
+            Voiture voiture = db.Voitures.Find(id);
+            var user = db.Users.SingleOrDefault(u => u.email.ToLower() == emailId);
+
+            Location location = new Location()
+            {
+                Voiture = voiture,
+                voitureID = voiture.voitureID,
+                StartDate = start,
+                EndDate = end,
+                userID = user.userID
+
+            };
+            
+            Location check = CheckLocation(location);
+            if (check != null)
+            {
+                return View();
+            }
+            db.Locations.Add(location);
+            db.SaveChanges();
+            return View();
+        }
+        private Location CheckLocation(Location location)
+        {
+            return db.Locations.FirstOrDefault(
+                            t => t.voitureID == location.voitureID
+                            && t.userID==location.userID
+                            && t.StartDate == location.StartDate
+                            && t.EndDate == location.EndDate);
+        }
+
+
+
         public void InitStartDate(DateTime startDate)
         {
             start = startDate;
         }
 
-        /// <summary>
-        /// initializing the end hire date that the client picked
-        /// </summary>
-        /// <param name="endDate"></param>
         public void InitEndDate(DateTime endDate)
         {
             end = endDate;
         }
         public void InitFilter(TypeCarburant filtercarburant, TypeCategorie type, string nom, string serie)
         {
+            
+
+            var categorie = db.Categories.SingleOrDefault(u => u.type == type);
+            var modele = db.Modeles.SingleOrDefault(u => u.nom == nom);
+            VoitureFilter.modeleID = modele.modeleID;
             VoitureFilter.carburant = filtercarburant;
-            VoitureFilter.Categorie.type = type;
-            VoitureFilter.Modele.nom = nom;
-            VoitureFilter.Modele.serie = serie;
-           // VoitureFilter.FreeText = freeText;
+            VoitureFilter.categorieID = categorie.categorieID;
+
+            //VoitureFilter.Modele.serie = modele.serie;
         }
 
         protected override void Dispose(bool disposing)
